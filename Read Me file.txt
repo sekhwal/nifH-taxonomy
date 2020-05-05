@@ -1,0 +1,51 @@
+READ file to make taxonomy file to analysis nifH with Mothur.
+
+#######Download and pre-analysis process########
+1. Download nifH database in fasta format.
+2. Grep GenBank ID using following command
+	grep "^>" nifH-database.fasta >file1.txt
+3. Open file (file1.txt) in Excel and prepare as only ID
+	##Split (file1.txt) following command
+	split -b 50k file1.txt file2.txt
+4. Download all nucleotide in GenBank format of all IDs in splited files. 
+5. Marge all GenBank format files using cat command.
+6. Follow next process-
+
+a.)##remove newline after specific character (;) at end of line using following command########
+	awk '/;$/ { printf("%s\t", $0); next } 1' sequence.gb >file3.txt
+
+b.)########grep lines ########
+	grep -A 1 'LOCUS\|ORGANISM' file3.txt >file4.txt
+
+c.)####remove specific extra lines such as DEFINATION, ORGANISM, -- etc.########
+	grep -v '^  ORGANISM' file4.txt >file5.txt(two space before ORGANISM)
+
+d.)##remove newline after specific character (LOCUS) at end of line using following command########
+	awk '$1 == "LOCUS" {printf "%s", $0; next} 1' file5.txt >file6.txt
+
+e.)########grep ORGANISM names########
+	grep -e 'ORGANISM' sequence.gb >file7.txt
+
+6. Open files6.txt and file7.txt in Excel and marge both as same rows as their ORGANISMS and Classification information.  
+7. To convert tab to semicolon.
+	First cut IDs column in another excel file and run following command
+	sed 's/[[:space:]]\{1,\}/;/g' file7.txt >file8.txt
+	Than insert IDs column into new semicolumn added file
+8. Here, file8.txt can use as taxonomy file to analysis nifH sequencing data using Mothur. 
+9. It is good file should have not more than 9 cloumn.
+10. Make confirm there are not any white space end of each line inthe file.
+	To remove whitespace from end of each line use following command
+
+ 		sed 's/[ \t]\+$//' space.txt >out.txt
+ 
+
+
+
+
+
+
+
+
+
+
+
