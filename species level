@@ -1,1 +1,27 @@
 Pipeline for classification upto species of Mothur's taxonomy results files.
+####################################Pipeline for classification upto Species name of Mothur's taxonomy Results files#################
+#
+##
+1. Prepare Mothur results taxonomy file (.tax).
+
+	a.) Delete OTUs and Size columns and remove (100) and other numaric values using Excel.
+2. Open Cygwin64 Terminal and use following command to grep IDs from Silva taxonomy file of Mothur result.
+
+	grep -Ff file1.txt silva-new.txt >out.txt
+
+3. Download GenBank information of these IDs using Batch Entrez. 
+4. Grep LOCUS and ORGANISM information using following command. 
+	grep -e 'LOCUS' -e 'ORGANISM' sequence.gb >file2.txt
+
+	##remove newline after specific character (LOCUS) at end of line using following command########(before using this command check format 	of file2.txt, remove any lines (e.g. KEYWORDS) other than LOCUS and ORGANISM).
+	
+	awk 'NR%2{printf "%s ",$0;next;}1' file2.txt >file3.txt
+
+5. Prepare file3.txt by id and organisms name using Excel. 
+6. Finally marge file3.txt to silva taxonomy file based on column 1 (id) using following command. If output file not aliging, add whitespace or symbol (e.g .) in last column of file3.txt and use following command.
+
+awk 'FNR==NR{a[$1]=$2;next} ($1 in a) {print $1,$2,$3,a[$1]}' silva.txt file3.txt >final.txt
+
+7. Shift ORGANISMS name's column in the end of classification in final.txt file.
+
+##########################################################################################################
